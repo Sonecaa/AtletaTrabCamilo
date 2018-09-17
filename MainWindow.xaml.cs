@@ -26,21 +26,22 @@ namespace TrabCamilo
             BaseDAO dao = new BaseDAO();
             var comando = new MySqlCommand("SELECT * FROM atleta");
             DataTable dt = dao.RetornarDataTable(comando);
-            lstAtletas.ItemsSource = RetornaTodos(dt) ;
+            lstAtletas.ItemsSource = RetornaTodos(dt);
         }
 
-        private List<Atleta> RetornaTodos(DataTable reg)
+        private List<String> RetornaTodos(DataTable reg)
         {
-            List<Atleta> listaAtelta = new List<Atleta>();
+            List<String> listaAtelta = new List<String>();
 
             foreach (DataRow dr in reg.Rows)            
             {
                 var atleta = new Atleta {
+                    id = (int) Convert.ToDouble(dr["idatleta"]),
                     Nome = dr["nome_atleta"].ToString(),
                     Peso = Convert.ToDouble(dr["peso_atleta"]),
                     Altura = Convert.ToDouble(dr["altura_atleta"]),
                 };
-                listaAtelta.Add(atleta);
+                listaAtelta.Add('"' + "" + atleta.id + "" +'"' + " - " + atleta.Nome);
             }
 
             return listaAtelta;
@@ -93,7 +94,15 @@ namespace TrabCamilo
 
         private void btnExcluir_Click(object sender, RoutedEventArgs e)
         {
-
+            if(lstAtletas.SelectedIndex >= 0)
+            {
+                String ids = lstAtletas.SelectedItem.ToString();
+                String idatleta = ids.Substring(1, 1);
+              MessageBox.Show(idatleta + " será deletado");
+                actionToSql("DELETE FROM Atleta WHERE idatleta =" + idatleta);
+                ListarAtletas();
+            }
+      
         }
 
         private void btnConsultar_Click(object sender, RoutedEventArgs e)
